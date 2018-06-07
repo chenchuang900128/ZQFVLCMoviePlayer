@@ -12,7 +12,13 @@
 #import "ZQFVLCPlayerViewController.h"
 #import <MobileVLCKit/MobileVLCKit.h>
 #import <MediaPlayer/MediaPlayer.h>
+
+
+#define DeviceIsIphoneX (([UIScreen mainScreen].bounds.size.height) > 811)
+#define kIphoneXHomeHeight ((DeviceIsIphoneX)?(34.f):(0))
+
 @interface ZQFVLCPlayerViewController ()<VLCMediaPlayerDelegate>
+@property (weak, nonatomic) IBOutlet UIView *myBottomView;
 
 @property (nonatomic, strong)VLCMediaPlayer *mediaplayer;
 
@@ -27,13 +33,18 @@
 @property (weak, nonatomic) IBOutlet UIView *playerView;
 
 //-------------------state-------------------
+// 播放状态按钮
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
+// 快进状态按钮
 @property (weak, nonatomic) IBOutlet UIView *fastStateView;
+// 快进图片
 @property (weak, nonatomic) IBOutlet UIImageView *fastImageView;
+//
 @property (weak, nonatomic) IBOutlet UILabel *fastProgressLabel;
 @property (weak, nonatomic) IBOutlet UILabel *fastTotalLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *tipsLabel;
+// 播放状态文字
 @property (weak, nonatomic) IBOutlet UILabel *playerStateLabel;
 
 
@@ -76,6 +87,7 @@
     if (self) {
         _mediaURL = [mediaURL copy];
         _mediaName = [mediaName copy];
+        // 电池检测
         _batteryMonitoringEnabled = [[UIDevice currentDevice] isBatteryMonitoringEnabled];
     }
     return self;
@@ -83,11 +95,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (DeviceIsIphoneX) {
+        // 底部位置
+        _topViewTopConstraint.constant = 0;
+        _bottomBottomConstraint.constant = 34;
+    }
+    
+    // 电影标题
     self.movTitleLabel.text = _mediaName;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    // 进入播放的标识
     if (!_isEnteredFlag) {
         [self setupMoviePlayer];
         _isEnteredFlag = YES;
@@ -97,6 +117,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:_batteryMonitoringEnabled];
+    // 关闭播放
     if (_mediaplayer) {
         if (_mediaplayer.media)
             [_mediaplayer stop];
@@ -110,22 +131,25 @@
 
 //配置播放器
 - (void)setupMoviePlayer{
+    _mediaplayer = nil;
     _mediaplayer = [[VLCMediaPlayer alloc] init];
     _mediaplayer.delegate = self;
+    // 播放承载视图
     _mediaplayer.drawable = self.playerView;
-    
     _mediaplayer.media = [VLCMedia mediaWithURL:_mediaURL];
     [_mediaplayer play];
 }
 
 //播放或者暂停
-- (IBAction)playOrPauseAction:(id)sender {
+- (IBAction)playOrPauseAction:(UIButton *)sender {
     if (_mediaplayer.isPlaying) {
         [_mediaplayer pause];
+        // 屏幕中的播放按钮
         _playButton.hidden = NO;
     }
     else {
         [_mediaplayer play];
+        // 屏幕中的播放按钮
         _playButton.hidden = YES;
     }
 }
@@ -134,11 +158,16 @@
 - (IBAction)sliderDragInsideAction:(id)sender {
     CGFloat progressValue = _playerSlider.value;
     NSInteger value = self.totalTime * progressValue;
+    //  视频播放进度
     VLCTime *vlcTime = [VLCTime timeWithInt:(int)value];
+    // 视频总长度
     VLCTime *vlcTotalTime = [VLCTime timeWithInt:(int)self.totalTime];
+    // 快进后视频播放进度
     _fastProgressLabel.text = vlcTime.stringValue;
+    // 视频总时间
     _fastTotalLabel.text = vlcTotalTime.stringValue;
     
+    // 如果视频播放进度小于视频总时间
     if ([vlcTime compare:_mediaplayer.time] == NSOrderedAscending) {
         _fastImageView.highlighted = YES;
     } else {
@@ -146,9 +175,13 @@
     }
 }
 
+// 进度条点击
 - (IBAction)sliderTouchUpInsideAction:(id)sender {
+    // 快进状态View
     _fastStateView.hidden = YES;
+    // 进度条是否拖拽
     _isSliderDragging = NO;
+    // 播放器位置
     _mediaplayer.position = _playerSlider.value;
 }
 
@@ -213,20 +246,29 @@
     
     CGFloat topConstraint = 0;
     CGFloat bottomConstraint = 0;
-    
+    //  显示播放器控件（工具栏隐藏时候）
     if (_isToolViewHidden) {
+        // 横屏
         if (_isTransformed) {
-            topConstraint = -20;
+            topConstraint = -30;
             [self setupBatteryLevel];
             [self setupCurrentTime];
         } else {
+            if (DeviceIsIphoneX) {
+                bottomConstraint = 34;
+            }
+            else{
+                topConstraint = -10;
+            }
             _currentTimeLabel.hidden = YES;
             _batteryLevelLabel.hidden = YES;
         }
         _isToolViewHidden = NO;
-    } else {
-        topConstraint = -64;
-        bottomConstraint = -44;
+    }
+    else {
+        // 隐藏播放器控件（工具栏显示的时候）
+        topConstraint = -74;
+        bottomConstraint = (DeviceIsIphoneX?(-(50+kIphoneXHomeHeight)):(-50));
         _isToolViewHidden = YES;
     }
     
@@ -243,9 +285,17 @@
 - (BOOL)prefersStatusBarHidden NS_AVAILABLE_IOS(7_0){
     return _isTransformed;
 }
+
 //锁定屏幕
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations NS_AVAILABLE_IOS(6_0){
     return UIInterfaceOrientationMaskPortrait;
+}
+
+// 从头播放
+- (void)rePlayAgain{
+    _playerSlider.value = 0;
+    _mediaplayer.position = 0.f;
+    [self setupMoviePlayer];
 }
 
 #pragma mark - delegate
@@ -258,6 +308,8 @@
             _playOrPauseButton.selected = YES;
             _playerStateLabel.text = @"Stopped";
             _playerStateLabel.hidden = NO;
+         
+            [self rePlayAgain];
         }
             break;
         case VLCMediaPlayerStateOpening: {//1
@@ -266,7 +318,7 @@
         }
             break;
         case VLCMediaPlayerStateBuffering: {//2
-            _playerStateLabel.text = @"正在缓冲";
+            _playerStateLabel.text = @"正在缓冲..";
             _playerStateLabel.hidden = NO;
         }
             break;
@@ -274,12 +326,18 @@
             _playOrPauseButton.selected = YES;
             _playerStateLabel.text = @"The End";
             _playerStateLabel.hidden = NO;
+            
+            [self rePlayAgain];
+
         }
             break;
         case VLCMediaPlayerStateError: {//4
             _playOrPauseButton.selected = YES;
             _playerStateLabel.text = @"Error";
             _playerStateLabel.hidden = NO;
+            
+            [self rePlayAgain];
+
         }
             break;
         case VLCMediaPlayerStatePlaying: {//5
@@ -289,6 +347,8 @@
             break;
         case VLCMediaPlayerStatePaused: {//6
             _playOrPauseButton.selected = YES;
+            _playerStateLabel.text = @"暂停";
+            _playerStateLabel.hidden = NO;
         }
             break;
             
@@ -339,14 +399,18 @@
     CGFloat screenHeight = self.view.bounds.size.height;
     CGFloat screenWidth = self.view.bounds.size.width;
     CGFloat constant = 0;
+    CGFloat bottomConstant = 0;
     if (_isTransformed) {
-        constant = -20;
-        
+        // 横屏时候
+        constant = -30;
+        bottomConstant = 0;
         [self setupBatteryLevel];
         [self setupCurrentTime];
         
     } else {
-        constant = 0;
+        // 竖屏时候
+        constant = (DeviceIsIphoneX?0:(-10));
+        bottomConstant = (DeviceIsIphoneX?34:0);
         _currentTimeLabel.hidden = YES;
         _batteryLevelLabel.hidden = YES;
     }
@@ -355,6 +419,7 @@
         [self.view setTransform:CGAffineTransformMakeRotation(angle)];//旋转view
         self.view.bounds = CGRectMake(0, 0, screenHeight, screenWidth);//设置bounds
         _topViewTopConstraint.constant = constant;
+        _bottomBottomConstraint.constant = bottomConstant;
         [self setNeedsStatusBarAppearanceUpdate];
         [self.view layoutIfNeeded];
     }];
@@ -444,6 +509,7 @@
     }
     _fastStateView.hidden = YES;
 }
+
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
     _fastStateView.hidden = YES;
 }

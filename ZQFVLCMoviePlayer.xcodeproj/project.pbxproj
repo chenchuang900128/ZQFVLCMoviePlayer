@@ -56,6 +56,7 @@
 		0FEB02591CBB8D3300266900 /* ZQFVideoPlayer_fastfarword.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FEB02551CBB8D3300266900 /* ZQFVideoPlayer_fastfarword.png */; };
 		0FEB025A1CBB8D3300266900 /* ZQFVideoPlayer_fastfarword@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FEB02561CBB8D3300266900 /* ZQFVideoPlayer_fastfarword@2x.png */; };
 		0FEB025C1CBBB34B00266900 /* MobileVLCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FEB025B1CBBB34B00266900 /* MobileVLCKit.framework */; };
+		EAAD713520B6981600F094A1 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EAAD713420B6981600F094A1 /* libstdc++.6.0.9.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +127,7 @@
 		0FEB02551CBB8D3300266900 /* ZQFVideoPlayer_fastfarword.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ZQFVideoPlayer_fastfarword.png; sourceTree = "<group>"; };
 		0FEB02561CBB8D3300266900 /* ZQFVideoPlayer_fastfarword@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ZQFVideoPlayer_fastfarword@2x.png"; sourceTree = "<group>"; };
 		0FEB025B1CBBB34B00266900 /* MobileVLCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MobileVLCKit.framework; sourceTree = "<group>"; };
+		EAAD713420B6981600F094A1 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +135,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAAD713520B6981600F094A1 /* libstdc++.6.0.9.tbd in Frameworks */,
 				0FE8CA9C1CBCA6CA006E101C /* CoreVideo.framework in Frameworks */,
 				0FE8CA9A1CBCA6C4006E101C /* CoreMedia.framework in Frameworks */,
 				0FE8CA981CBCA6B7006E101C /* VideoToolbox.framework in Frameworks */,
@@ -165,6 +168,7 @@
 		0FE8CA7C1CBCA623006E101C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EAAD713420B6981600F094A1 /* libstdc++.6.0.9.tbd */,
 				0FE8CA9B1CBCA6CA006E101C /* CoreVideo.framework */,
 				0FE8CA991CBCA6C4006E101C /* CoreMedia.framework */,
 				0FE8CA971CBCA6B7006E101C /* VideoToolbox.framework */,
@@ -330,6 +334,8 @@
 				TargetAttributes = {
 					0FEB01FB1CBB58D500266900 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = B94C4GLS2Q;
+						ProvisioningStyle = Manual;
 					};
 					0FEB02141CBB58D500266900 = {
 						CreatedOnToolsVersion = 7.3;
@@ -538,16 +544,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = B94C4GLS2Q;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ZQFVLCMoviePlayer/ZQFVLCMoviePlayerClass",
+					"\"$(SRCROOT)/ZQFVLCMoviePlayer/ZQFVLCMoviePlayerClass/MobileVLCKit.framework\"",
 				);
 				INFOPLIST_FILE = ZQFVLCMoviePlayer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cc.devfu.ZQFVLCMoviePlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "7ecf59c2-9402-45e7-8ede-8370e6780e8b";
+				PROVISIONING_PROFILE_SPECIFIER = DevelopAll;
 			};
 			name = Debug;
 		};
@@ -556,16 +568,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = B94C4GLS2Q;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ZQFVLCMoviePlayer/ZQFVLCMoviePlayerClass",
+					"\"$(SRCROOT)/ZQFVLCMoviePlayer/ZQFVLCMoviePlayerClass/MobileVLCKit.framework\"",
 				);
 				INFOPLIST_FILE = ZQFVLCMoviePlayer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cc.devfu.ZQFVLCMoviePlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "7ecf59c2-9402-45e7-8ede-8370e6780e8b";
+				PROVISIONING_PROFILE_SPECIFIER = DevelopAll;
 			};
 			name = Release;
 		};
